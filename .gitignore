@@ -30,3 +30,5 @@
 *.exe
 *.out
 *.app
+redis_main
+client_main

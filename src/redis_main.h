@@ -1,7 +1,3 @@
-#include <stdio.h>
-#include <unistd.h>
-#include <string.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
+#include "common.h"
 
-static void do_something(int client_fd);
+int32_t one_request(int client_fd);

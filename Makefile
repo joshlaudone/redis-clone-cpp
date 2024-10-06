@@ -1,10 +1,10 @@
 CXX=g++
-CXXFLAGS=-Wall -Werror
+CXXFLAGS=-Wall -Werror -g3
 
-REDIS_SRCS = src/redis_main.cpp
+REDIS_SRCS = src/redis_main.cpp src/common.cpp
 REDIS_OBJS = $(REDIS_SRCS:.cpp=.o)
 
-CLIENT_SRCS = src/client_main.cpp
+CLIENT_SRCS = src/client_main.cpp src/common.cpp
 CLIENT_OBJS = $(CLIENT_SRCS:.cpp=.o)
 
 REDIS_TARGET = redis_main

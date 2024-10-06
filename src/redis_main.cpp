@@ -22,6 +22,7 @@ int main(int argc, char *argv[]) {
     return -1; 
   }
 
+  // Serve connections
   while (true) {
     struct sockaddr_in client_addr = {};
     socklen_t addrlen = sizeof(client_addr);
@@ -30,23 +31,46 @@ int main(int argc, char *argv[]) {
       continue;
     }
 
-    do_something(client_fd);
+    while (true) {
+      int32_t err = one_request(client_fd);
+      if (err) {
+        break;
+      }
+    }
+
     close(client_fd);
   }
+
+  return 0;
 }
 
-static void do_something(int client_fd) {
-  char read_buffer[64] = {};
+int32_t one_request(int client_fd) {
+  char read_buffer[msg_buffer_len] = {};
+  int32_t err;
 
-  ssize_t bytes_read = read(client_fd, read_buffer, sizeof(read_buffer) - 1);
-
-  if (bytes_read < 0) {
-    fprintf(stderr, "read() error");
-    return;
+  // Read message size
+  err = read_full(client_fd, read_buffer, msg_len_size);
+  if (err) {
+    return err;
   }
 
-  printf("Client message: %s\n", read_buffer);
+  uint32_t msg_len;
+  memcpy(&msg_len, read_buffer, msg_len_size);
+  if (msg_len > max_msg_len) {
+    return -1;
+  }
 
-  char write_buffer[] = "world";
-  write(client_fd, write_buffer, strlen(write_buffer));
+  // Read message
+  err = read_full(client_fd, &read_buffer[msg_len_size], msg_len);
+  if (err) {
+    return err;
+  }
+
+  read_buffer[msg_len_size + msg_len] = '\0';
+
+  printf("Client message: %s\n", &read_buffer[4]);
+
+  // Echo client message
+  err =  write_all(client_fd, read_buffer, msg_len_size + msg_len);
+  return err;
 }

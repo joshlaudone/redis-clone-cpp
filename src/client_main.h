@@ -1,5 +1,3 @@
-#include <stdio.h>
-#include <unistd.h>
-#include <string.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
+#include "common.h"
+
+int32_t query(int socket_fd, const char *message);
